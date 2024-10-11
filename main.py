@@ -9,7 +9,7 @@ r = Router()
 dp = Dispatcher()
 dp.include_router(r)
 queue = []
-
+names = dict()
 
 @r.message(Command("start"))
 async def start(message: Message):
@@ -20,6 +20,7 @@ async def start(message: Message):
 async def enqueue(message: Message):
     if not message.from_user.id in queue:
         queue.append(message.from_user.id)
+        names[message.from_user.id] = message.from_user.username or message.from_user.full_name
         await message.answer("Ты добавлен в очередь")
         if len(queue) == 1:
             await message.answer("Ты идешь первым!")
@@ -49,7 +50,9 @@ async def purge(message: Message):
 @r.message(Command("queue"))
 async def listqueue(message: Message):
     if message.from_user.id in queue:
-        await message.answer(f"Твоя очередь: {queue.index(message.from_user.id)+1}")
+        # await message.answer(f"Твоя очередь: {queue.index(message.from_user.id)+1}")
+        msg = '\n'.join([str(a+1)+" @"+names[i] for a,i in enumerate(queue)])
+        await message.answer(msg)
     else:
         await message.answer(f"Ты не в очереди")
 
