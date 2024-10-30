@@ -43,7 +43,9 @@ async def dequeue(message: Message):
 
 @r.message(Command("purge"))
 async def purge(message: Message):
-    if not message.from_user.id == 799100592: return await message.answer("ПОШЕЛ НАХУЙ")
+    if not message.from_user.id == 799100592:
+        queue.remove(message.from_user.id)
+        return await message.answer("ПОШЕЛ НАХУЙ")
     queue.clear()
     await message.answer("Очередь очищена")
 
